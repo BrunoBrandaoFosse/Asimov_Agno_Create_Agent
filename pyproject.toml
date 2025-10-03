@@ -1,0 +1,10 @@
+[project]
+name = "asimov-agno-create-agent"
+version = "0.1.0"
+description = "Criando um agente com Agno"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "agno==1.8",
+    "python-dotenv>=1.1.1",
+]
