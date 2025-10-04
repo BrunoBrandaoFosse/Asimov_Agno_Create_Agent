@@ -32,4 +32,15 @@ uv pip list
 
 # Variáveis de ambiente (instalar pacote)
 uv add python-dotenv
+
+```
+
+## Para executar o arquivo 1.1.researcher.py
+
+```bash
+# Instalar tavily-python
+uv add tavily-python
+
+# Criar o agente
+uv run 1.1.researcher.py
 ```

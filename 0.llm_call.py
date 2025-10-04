@@ -7,6 +7,8 @@ from agno.models.groq import Groq
 # É uma mensagem que pode ser enviada para o modelo
 from agno.models.message import Message
 
+import json
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -19,5 +21,9 @@ msg = Message(
 
 response = model.invoke([msg])
 
+print('========================================')
+print(json.dumps(response.__dict__, indent=4, ensure_ascii=False, default=str))
+print('========================================')
 print(response.choices[0].message.content)
+print('========================================')
 
