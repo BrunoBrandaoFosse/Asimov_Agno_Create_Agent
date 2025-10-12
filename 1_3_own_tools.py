@@ -1,10 +1,7 @@
-"""
-uv add tavily-python
-uv run 1.3.own_tools.py
-"""
 from agno.agent import Agent
 from agno.tools.tavily import TavilyTools
 from agno.models.openai import OpenAIChat
+from agno.storage.sqlite import SqliteStorage
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -24,6 +21,8 @@ def celsius_to_fh(temperatura_celsius: float):
   """
   return (temperatura_celsius * 9/5) + 32
 
+db = SqliteStorage(table_name="agent_session", db_file="tmp/agent.db")
+
 agent = Agent(
   name="Agente do tempo",
   model=OpenAIChat(id="gpt-4.1-mini"),
@@ -31,19 +30,23 @@ agent = Agent(
     TavilyTools(),
     celsius_to_fh,
   ],
-  debug_mode=False
+  debug_mode=False,
+  # ==================================
+  # Armazena o estado e o histórico do agente em um banco de dados SQLite
+  storage=db,
+  # Adiciona histórico as mensagens
+  add_history_to_messages=True,
+  # Quantas das mensagens anteriores que foram enviadas
+  # Basicamente quantas mensagens anteriores ele deve considerar (janela de contexto)
+  # Padrão: 3
+  num_history_runs=3,
+  # ==================================
 )
 
-agent.print_response("""
-Use suas ferramentas para pesquisar a temperatura de hoje em Venda Nova do Imigrante e convertê-la para Fahrenheit.
-
-INSTRUÇÕES IMPORTANTES:
-1. Primeiro, use a ferramenta de pesquisa para encontrar a temperatura atual
-2. Extraia o valor numérico da temperatura dos resultados (ex: se encontrar "25°C", use 25)
-3. Use a função celsius_to_fh com o valor numérico extraído (não use strings como "temperatura_encontrada")
-4. Apresente o resultado final em Fahrenheit
-
-Exemplo correto: celsius_to_fh(25) - onde 25 é o valor numérico da temperatura
-Exemplo incorreto: celsius_to_fh("temperatura_encontrada") - não use strings
-""")
+if __name__ == '__main__':
+  ask = ''
+  while ask != 'x':
+    ask = input('Faça sua pergunta: ')
+    if ask != 'x':
+      agent.print_response(ask)
 
